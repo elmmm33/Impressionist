@@ -64,13 +64,13 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	{
 		case STROKE_SLIDER:
 		{
-			printf("line Direct Pattern is", pDoc->lineDirectPattern);
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			angle = pDoc->getLineAngle();	
 			break;
 		}
 		case STROKE_GRAD:
 		{
-			printf("line Direct Pattern is", pDoc->lineDirectPattern);
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			int x = target.x - startCol;
 			int y = target.y - startRow;
 			int width = pDoc->m_nWidth;
@@ -83,7 +83,7 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		}
 		case STROKE_BRUSH:
 		{
-			printf("line Direct Pattern is", pDoc->lineDirectPattern);
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			double xDiff = target.x - (pDoc->currentPoint.x);
 			double yDiff = target.y - (pDoc->currentPoint.y);
 

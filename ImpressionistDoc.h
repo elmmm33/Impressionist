@@ -56,8 +56,10 @@ public:
 	unsigned char*	m_ucPainting;
 
 	// Add by Sherry
-	int lineDirectPattern = 0;				// dafult value for the direction of stroke
+	int lineDirectPattern;				// dafult value for the direction of stroke
 	int* m_ucAngle;						// parametersf for line brush angle	
+	unsigned char* m_ucGray;
+	unsigned char* m_ucBlur;
 
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;	
