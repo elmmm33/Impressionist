@@ -87,6 +87,17 @@ char* ImpressionistDoc::getImageName()
 void ImpressionistDoc::setBrushType(int type)
 {
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[type];
+	if (type != BRUSH_LINES && type != BRUSH_SCATTERED_LINES) {
+		m_pUI->m_StrokeDirectionChoice->deactivate();
+		m_pUI->m_LineWidthSlider->deactivate();
+		m_pUI->m_LineAngleSlider->deactivate();
+	}
+	else
+	{
+		m_pUI->m_StrokeDirectionChoice->activate();
+		m_pUI->m_LineWidthSlider->activate();
+		m_pUI->m_LineAngleSlider->activate();
+	}
 }
 
 //---------------------------------------------------------

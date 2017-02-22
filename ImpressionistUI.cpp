@@ -571,6 +571,11 @@ ImpressionistUI::ImpressionistUI() {
 		m_AlphaSlider->align(FL_ALIGN_RIGHT);
 		m_AlphaSlider->callback(cb_alphaSlides);
 
+		// default line width slider and angle slider are deactive
+		m_LineWidthSlider->deactivate();
+		m_LineAngleSlider->deactivate();
+		m_StrokeDirectionChoice->deactivate();
+
 		// end 
 
 
