@@ -40,12 +40,30 @@ void S_PointBrush::BrushMove(const Point source, const Point target)
 		return;
 	}
 
-	glBegin(GL_POINTS);
-	SetColor(source);
+	int size;
+	glGetIntegerv(GL_POINT_SIZE, &size);
+	double halfSize = size / 2.0;
+	double startXS = source.x - halfSize;
+	double startYS = source.y - halfSize;
+	double startXT = target.x - halfSize;
+	double startYT = target.y - halfSize;
 
-	glVertex2d(target.x, target.y);
 
-	glEnd();
+	glPointSize(1);
+
+	for (int i = 0; i<size; i++)
+		for (int j = 0; j<size; j++)
+		{
+			int seed = rand() % 50;
+			if (seed<25)
+			{
+				Point newS = Point(startXS + i, startYS + j);
+				Point newT = Point(startXT + i, startYT + j);
+				ImpBrush::c_pBrushes[BRUSH_POINTS]->BrushMove(newS, newT);
+			}
+		}
+
+	glPointSize(float(size));
 }
 
 void S_PointBrush::BrushEnd(const Point source, const Point target)

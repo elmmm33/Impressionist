@@ -27,6 +27,7 @@
 static int		eventToDo;
 static int		isAnEvent=0;
 static Point	coord;
+const double PI = 3.141592653589793;
 
 PaintView::PaintView(int			x, 
 					 int			y, 
@@ -92,46 +93,85 @@ void PaintView::draw()
 
 	}
 
-	if ( m_pDoc->m_ucPainting && isAnEvent) 
+	if (m_pDoc->m_ucPainting && isAnEvent)
 	{
 
 		// Clear it after processing.
-		isAnEvent	= 0;	
+		isAnEvent = 0;
 
-		Point source( coord.x + m_nStartCol, m_nEndRow - coord.y );
-		Point target( coord.x, m_nWindowHeight - coord.y );
-		
+		Point source(coord.x + m_nStartCol, m_nEndRow - coord.y);
+		Point target(coord.x, m_nWindowHeight - coord.y);
+
 		// This is the event handler
-		switch (eventToDo) 
+		switch (eventToDo)
 		{
 		case LEFT_MOUSE_DOWN:
-			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
+			m_pDoc->m_pCurrentBrush->BrushBegin(source, target);
 			break;
 		case LEFT_MOUSE_DRAG:
-			m_pDoc->m_pCurrentBrush->BrushMove( source, target );
+			m_pDoc->m_pCurrentBrush->BrushMove(source, target);
 			break;
 		case LEFT_MOUSE_UP:
-			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
+			m_pDoc->m_pCurrentBrush->BrushEnd(source, target);
 
 			SaveCurrentContent();
 			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-
+			r_ClickPoint = target;
 			break;
 		case RIGHT_MOUSE_DRAG:
+		{
+			RestoreContent();
 
-			break;
-		case RIGHT_MOUSE_UP:
+			glLineWidth(1);
 
-			break;
-
-		default:
-			printf("Unknown event!!\n");		
+			glBegin(GL_LINES);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex2d(r_ClickPoint.x, r_ClickPoint.y);
+			glVertex2d(target.x, target.y);
+			glEnd();
 			break;
 		}
-	}
+		case RIGHT_MOUSE_UP:
+		{
+			RestoreContent();
+			double xDist = target.x - r_ClickPoint.x;
+			double yDist = target.y - r_ClickPoint.y;
 
+			//Set the angle of Line
+			if (xDist == 0) m_pDoc->setLineAngle(90);
+			else
+			{
+				double tanV = yDist / xDist;
+				int angle = (atan2(yDist, xDist) / (2 * PI) * 360);
+				m_pDoc->setLineAngle(angle);
+			}
+
+			//Set the size of line
+			double dist;
+			double tempDist = sqrt(xDist*xDist + yDist*yDist);
+			if (tempDist <= 1)
+			{
+				dist = 1;
+				m_pDoc->setSize(1);
+			}
+			else
+			{
+				dist = (int)(tempDist + 0.5);
+				m_pDoc->setSize(dist);
+			}
+
+			glClear(GL_BACK);
+			break;
+		}
+		default:
+		{
+				printf("Unknown event!!\n");
+				break;
+		}
+		}
+	}
 	glFlush();
 
 	#ifndef MESA

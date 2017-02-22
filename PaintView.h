@@ -50,6 +50,8 @@ private:
 			m_nWindowWidth, 
 			m_nWindowHeight;
 
+	Point r_ClickPoint;		// for right click starting point
+
 };
 
 #endif
