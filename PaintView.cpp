@@ -4,16 +4,13 @@
 // The code maintaining the painting view of the input images
 //
 
-#include <cmath>
 #include "impressionist.h"
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "paintview.h"
 #include "ImpBrush.h"
-#include <iostream>
 
 
-#define MOUSE_MOVE			0
 #define LEFT_MOUSE_DOWN		1
 #define LEFT_MOUSE_DRAG		2
 #define LEFT_MOUSE_UP		3
@@ -30,6 +27,7 @@
 static int		eventToDo;
 static int		isAnEvent=0;
 static Point	coord;
+const double PI = 3.141592653589793;
 
 PaintView::PaintView(int			x, 
 					 int			y, 
@@ -59,11 +57,11 @@ void PaintView::draw()
 		// We're only using 2-D, so turn off depth 
 		glDisable( GL_DEPTH_TEST );
 
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
 		ortho();
 
-		glClear( GL_COLOR_BUFFER_BIT );		
+		glClear( GL_COLOR_BUFFER_BIT );
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	Point scrollpos;// = GetScrollPosition();
@@ -97,77 +95,72 @@ void PaintView::draw()
 
 	}
 
-	if ( m_pDoc->m_ucPainting && isAnEvent) 
+	if (m_pDoc->m_ucPainting && isAnEvent)
 	{
 
 		// Clear it after processing.
-		isAnEvent	= 0;	
+		isAnEvent = 0;
 
-		Point source( coord.x + m_nStartCol, m_nEndRow - coord.y );
-		Point target( coord.x, m_nWindowHeight - coord.y );
-		
+		Point source(coord.x + m_nStartCol, m_nEndRow - coord.y);
+		Point target(coord.x, m_nWindowHeight - coord.y);
+
 		// This is the event handler
-		switch (eventToDo) 
+		switch (eventToDo)
 		{
 		case LEFT_MOUSE_DOWN:
-			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
+			m_pDoc->m_pCurrentBrush->BrushBegin(source, target);
 			break;
 		case LEFT_MOUSE_DRAG:
-			m_pDoc->m_pCurrentBrush->BrushMove( source, target );
+			m_pDoc->m_pCurrentBrush->BrushMove(source, target);
 			break;
 		case LEFT_MOUSE_UP:
-			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
+			m_pDoc->m_pCurrentBrush->BrushEnd(source, target);
 
 			SaveCurrentContent();
 			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-			fixPoint=target;   //Define the initial fixPoint to create the effect
+			r_ClickPoint = target;
 			break;
 		case RIGHT_MOUSE_DRAG:
 		{
-			//Clear up the content before the next movement start
 			RestoreContent();
 
-			//glDrawBuffer(GL_BACK);  //Change the drawing buffer to back buffer.
 			glLineWidth(1);
 
-			glBegin( GL_LINES );
-				glColor3f(1.0f, 0.0f, 0.0f);
-				glVertex2d(fixPoint.x, fixPoint.y);
-				glVertex2d(target.x, target.y);
+			glBegin(GL_LINES);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex2d(r_ClickPoint.x, r_ClickPoint.y);
+			glVertex2d(target.x, target.y);
 			glEnd();
 			break;
 		}
 		case RIGHT_MOUSE_UP:
 		{
 			RestoreContent();
+			double xDist = target.x - r_ClickPoint.x;
+			double yDist = target.y - r_ClickPoint.y;
 
-			double xDist=target.x-fixPoint.x;
-			double yDist=target.y-fixPoint.y;
 			//Set the angle of Line
-			if(xDist==0)
-			{
-				m_pDoc->setLineAngle(90);
-			}
+			if (xDist == 0) m_pDoc->setLineAngle(90);
 			else
 			{
-				double tanV=yDist/xDist;
-				int angle=(atan2(yDist,xDist)/(2*PI)*360);
+				double tanV = yDist / xDist;
+				int angle = (atan2(yDist, xDist) / (2 * PI) * 360);
 				m_pDoc->setLineAngle(angle);
 			}
 
 			//Set the size of line
 			double dist;
-			double tempDist=sqrt(xDist*xDist+yDist*yDist);
-			if(tempDist<=1) 
+			double tempDist = sqrt(xDist*xDist + yDist*yDist);
+			if (tempDist <= 1)
 			{
-				dist=1;
+				dist = 1;
 				m_pDoc->setSize(1);
 			}
 			else
 			{
-				dist=(int)(tempDist + 0.5);
+				dist = (int)(tempDist + 0.5);
 				m_pDoc->setSize(dist);
 			}
 
@@ -175,11 +168,12 @@ void PaintView::draw()
 			break;
 		}
 		default:
-			printf("Unknown event!!\n");		
-			break;
+		{
+				printf("Unknown event!!\n");
+				break;
+		}
 		}
 	}
-
 	glFlush();
 
 	#ifndef MESA
@@ -206,6 +200,7 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DOWN;
 		isAnEvent=1;
 		redraw();
+
 		break;
 	case FL_DRAG:
 		coord.x = Fl::event_x();
@@ -216,15 +211,6 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DRAG;
 		isAnEvent=1;
 		redraw();
-
-		/* (Tim) Cursor on Origainl View [START] */
-		m_pDoc->m_pUI->m_origView->isEvent = true;
-		m_pDoc->m_pUI->m_origView->eventToDo = MOUSE_MOVE;
-		m_pDoc->m_pUI->m_origView->cursor.x = coord.x;
-		m_pDoc->m_pUI->m_origView->cursor.y = h() - coord.y;
-		m_pDoc->m_pUI->m_origView->refresh();
-		/* (Tim) Cursor on Origainl View [END] */
-
 		break;
 	case FL_RELEASE:
 		coord.x = Fl::event_x();
@@ -239,14 +225,6 @@ int PaintView::handle(int event)
 	case FL_MOVE:
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
-
-		/* (Tim) Cursor on Origainl View [START] */
-		m_pDoc->m_pUI->m_origView->isEvent = true;
-		m_pDoc->m_pUI->m_origView->eventToDo = MOUSE_MOVE;
-		m_pDoc->m_pUI->m_origView->cursor.x = coord.x;
-		m_pDoc->m_pUI->m_origView->cursor.y = h() - coord.y;
-		m_pDoc->m_pUI->m_origView->refresh();
-		/* (Tim) Cursor on Origainl View [END] */
 		break;
 	default:
 		return 0;
@@ -290,7 +268,7 @@ void PaintView::SaveCurrentContent()
 
 void PaintView::RestoreContent()
 {
-	//glDrawBuffer(GL_FRONT_AND_BACK);
+	glDrawBuffer(GL_BACK);
 
 	glClear( GL_COLOR_BUFFER_BIT );
 
@@ -306,11 +284,11 @@ void PaintView::RestoreContent()
 //	glDrawBuffer(GL_FRONT);
 }
 
+// Add function to get private parameter
 int PaintView::GetStartRow()
 {
 	return m_nStartRow;
 }
-
 
 int PaintView::GetEndRow()
 {
