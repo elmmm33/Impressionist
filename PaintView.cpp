@@ -158,6 +158,7 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DOWN;
 		isAnEvent=1;
 		redraw();
+
 		break;
 	case FL_DRAG:
 		coord.x = Fl::event_x();
@@ -239,4 +240,27 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+// Add function to get private parameter
+int PaintView::GetStartRow()
+{
+	return m_nStartRow;
+}
+
+int PaintView::GetEndRow()
+{
+	return m_nEndRow;
+}
+int PaintView::GetStartCol()
+{
+	return m_nStartCol;
+}
+int PaintView::GetEndCol()
+{
+	return m_nEndCol;
+}
+int PaintView::GetDrawHeight()
+{
+	return m_nDrawHeight;
 }

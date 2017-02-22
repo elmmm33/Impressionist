@@ -280,6 +280,37 @@ void ImpressionistUI::cb_sizeSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nSize=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+// Add by Sherry
+
+// Line brush width slider
+void ImpressionistUI::cb_line_widthSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nWidth = int(((Fl_Slider *)o)->value());
+}
+
+// Line brush angle slider
+void ImpressionistUI::cb_line_angleSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAngle = int(((Fl_Slider *)o)->value());
+}
+
+// Brush Alpha slider
+void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAlpha = double(((Fl_Slider *)o)->value());
+}
+
+// the brush stroke direciton
+void ImpressionistUI::cb_strokeDirection(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+
+	int type = (int)v;
+
+	pDoc->setStrokeDirect(type);
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -328,6 +359,58 @@ int ImpressionistUI::getSize()
 	return m_nSize;
 }
 
+// add by sherry
+
+// Return the width with line brush
+int ImpressionistUI::getLineWidth()
+{
+	return m_nWidth;
+}
+
+// Return the angle with line brush
+int ImpressionistUI::getLineAngle()
+{
+	return m_nAngle;
+}
+
+// Return alpha value
+double ImpressionistUI::getAlpha()
+{
+	return m_nAlpha;
+}
+
+// Set the line brush width
+void ImpressionistUI::setLineWidth(int width)
+{
+	m_nWidth = width;
+	if (width<40 && width >= 0) {
+		m_LineWidthSlider->value(m_nWidth);
+	};
+			
+}
+
+
+// Set the line brush angle
+void ImpressionistUI::setLineAngle(int angle)
+{
+	angle = angle % 360;
+	m_nAngle = angle;
+	m_LineAngleSlider->value(m_nAngle);
+}
+
+/*
+// Set the brush alpha
+void ImpressionistUI::setAlpha(double alpha)
+{
+	m_nAlpha = alpha;
+	if (alpha <= 1.00) {
+		m_AlphaSlider->value(m_nAlpha);
+	}
+}
+*/
+
+//end
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -335,7 +418,7 @@ void ImpressionistUI::setSize( int size )
 {
 	m_nSize=size;
 
-	if (size<=40) 
+	if (size <= 40 && size >= 0)
 		m_BrushSizeSlider->value(m_nSize);
 }
 
@@ -368,6 +451,16 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {0}
 };
 
+// Add by Sherry
+
+//Brush direction menu definition
+Fl_Menu_Item ImpressionistUI::strokeDirectionMenu[NUM_STROKE_DIRECTION + 1] = {
+	{ "Slider/Right Mouse",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_strokeDirection, (void*)STROKE_SLIDER },
+	{ "Gradient",			FL_ALT + 'g', (Fl_Callback *)ImpressionistUI::cb_strokeDirection, (void*)STROKE_GRAD },
+	{ "Brush Direction",		FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_strokeDirection, (void*)STROKE_BRUSH },
+	{ 0 }
+};
+
 
 
 //----------------------------------------------------
@@ -375,8 +468,8 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
 // Add new widgets here
 //----------------------------------------------------
 ImpressionistUI::ImpressionistUI() {
-	// Create the main window
-	m_mainWindow = new Fl_Window(600, 300, "Impressionist");
+		// Create the main window
+		m_mainWindow = new Fl_Window(600, 300, "Impressionist");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 600, 25);
@@ -386,25 +479,28 @@ ImpressionistUI::ImpressionistUI() {
 		// window
 		Fl_Group* group = new Fl_Group(0, 25, 600, 275);
 
-			// install paint view window
-			m_paintView = new PaintView(300, 25, 300, 275, "This is the paint view");//0jon
-			m_paintView->box(FL_DOWN_FRAME);
+		// install paint view window
+		m_paintView = new PaintView(300, 25, 300, 275, "This is the paint view");//0jon
+		m_paintView->box(FL_DOWN_FRAME);
 
-			// install original view window
-			m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon
-			m_origView->box(FL_DOWN_FRAME);
-			m_origView->deactivate();
+		// install original view window
+		m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon
+		m_origView->box(FL_DOWN_FRAME);
+		m_origView->deactivate();
 
 		group->end();
 		Fl_Group::current()->resizable(group);
-    m_mainWindow->end();
+		m_mainWindow->end();
 
-	// init values
+		// init values
 
-	m_nSize = 10;
+		m_nSize = 10;
+		m_nWidth = 1;
+		m_nAngle = 0;
+		m_nAlpha = 1;
 
-	// brush dialog definition
-	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
+		// brush dialog definition
+		m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
 		// Add a brush type choice to the dialog
 		m_BrushTypeChoice = new Fl_Choice(50,10,150,25,"&Brush");
 		m_BrushTypeChoice->user_data((void*)(this));	// record self to be used by static callback functions
@@ -415,6 +511,11 @@ ImpressionistUI::ImpressionistUI() {
 		m_ClearCanvasButton->user_data((void*)(this));
 		m_ClearCanvasButton->callback(cb_clear_canvas_button);
 
+		// Add stroke direction choice to the dialog
+		m_StrokeDirectionChoice = new Fl_Choice(110, 40, 160, 25, "&Stroke Direction");
+		m_StrokeDirectionChoice->user_data((void*)(this));
+		m_StrokeDirectionChoice->menu(strokeDirectionMenu);
+		m_StrokeDirectionChoice->callback(cb_strokeDirection);
 
 		// Add brush size slider to the dialog 
 		m_BrushSizeSlider = new Fl_Value_Slider(10, 80, 300, 20, "Size");
@@ -428,6 +529,51 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushSizeSlider->value(m_nSize);
 		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_BrushSizeSlider->callback(cb_sizeSlides);
+
+		// Add by sherry
+
+		// Add line width slider to the dialog
+		m_LineWidthSlider = new Fl_Value_Slider(10, 110, 300, 20, "Line Width");
+		m_LineWidthSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_LineWidthSlider->type(FL_HOR_NICE_SLIDER);
+		m_LineWidthSlider->labelfont(FL_COURIER);
+		m_LineWidthSlider->labelsize(12);
+		m_LineWidthSlider->minimum(1);
+		m_LineWidthSlider->maximum(40);
+		m_LineWidthSlider->step(1);
+		m_LineWidthSlider->value(m_nWidth);
+		m_LineWidthSlider->align(FL_ALIGN_RIGHT);
+		m_LineWidthSlider->callback(cb_line_widthSlides);
+
+		// Add Line angle slider to the dialog
+		m_LineAngleSlider = new Fl_Value_Slider(10, 140, 300, 20, "Line Angle");
+		m_LineAngleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_LineAngleSlider->type(FL_HOR_NICE_SLIDER);
+		m_LineAngleSlider->labelfont(FL_COURIER);
+		m_LineAngleSlider->labelsize(12);
+		m_LineAngleSlider->minimum(0);
+		m_LineAngleSlider->maximum(359);
+		m_LineAngleSlider->step(1);
+		m_LineAngleSlider->value(m_nAngle);
+		m_LineAngleSlider->align(FL_ALIGN_RIGHT);
+		m_LineAngleSlider->callback(cb_line_angleSlides);
+
+		// Add Alpha slider to the dialog
+		m_AlphaSlider = new Fl_Value_Slider(10, 170, 300, 20, "Alpha");
+		m_AlphaSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_AlphaSlider->type(FL_HOR_NICE_SLIDER);
+		m_AlphaSlider->labelfont(FL_COURIER);
+		m_AlphaSlider->labelsize(12);
+		m_AlphaSlider->minimum(0.00);
+		m_AlphaSlider->maximum(1);
+		m_AlphaSlider->step(0.01);
+		m_AlphaSlider->value(m_nAlpha);
+		m_AlphaSlider->align(FL_ALIGN_RIGHT);
+		m_AlphaSlider->callback(cb_alphaSlides);
+
+		// end 
+
+
 
     m_brushDialog->end();	
 

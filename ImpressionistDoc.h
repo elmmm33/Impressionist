@@ -23,10 +23,23 @@ public:
 	int		saveImage(char *iname);			// called by the UI to save image
 
 
-	int     clearCanvas();                  // called by the UI to clear the drawing canvas
-	void	setBrushType(int type);			// called by the UI to set the brushType
+	int		clearCanvas();                  // called by the UI to clear the drawing canvas
+	void		setBrushType(int type);			// called by the UI to set the brushType
+	
+	//add by sherry
 	int		getSize();						// get the UI size
-	void	setSize(int size);				// set the UI size
+	int		getLineWidth();				// get the Line width
+	int		getLineAngle();				// get the Line angle
+	double getAlpha();					// get alpha value
+
+	void		setSize(int size);				// set the UI size
+	void		setStrokeDirect(int type);		//set brush direction
+	void		setLineWidth(int width);		//set the Line width	
+	void		setLineAngle(int angle);			//set the Linea angle
+	void		setAlpha(double alpha);
+
+	//end
+
 	char*	getImageName();					// get the current image name
 	
 
@@ -42,9 +55,14 @@ public:
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
 
+	// Add by Sherry
+	int lineDirectPattern = 0;				// dafult value for the direction of stroke
+	int* m_ucAngle;						// parametersf for line brush angle	
 
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;	
+	Point currentPoint;		// Add by Sherry
+
 	// Size of the brush.
 	int m_nSize;							
 
