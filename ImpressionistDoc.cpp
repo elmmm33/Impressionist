@@ -14,6 +14,11 @@
 
 // Include individual brush headers here.
 #include "PointBrush.h"
+#include "LineBrush.h"
+#include "CircleBrush.h"
+#include "S_CircleBrush.h"
+#include "S_LineBrush.h"
+#include "S_PointBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -36,15 +41,15 @@ ImpressionistDoc::ImpressionistDoc()
 
 	// Note: You should implement these 5 brushes.  They are set the same (PointBrush) for now
 	ImpBrush::c_pBrushes[BRUSH_LINES]				
-		= new PointBrush( this, "Lines" );
+		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
-		= new PointBrush( this, "Circles" );
+		= new CircleBrush( this, "Circles" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
-		= new PointBrush( this, "Scattered Points" );
+		= new S_PointBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
-		= new PointBrush( this, "Scattered Lines" );
+		= new S_LineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
-		= new PointBrush( this, "Scattered Circles" );
+		= new S_CircleBrush( this, "Scattered Circles" );
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -84,6 +89,85 @@ int ImpressionistDoc::getSize()
 {
 	return m_pUI->getSize();
 }
+
+// Add by sherry
+
+// Return the width with the line brush
+int ImpressionistDoc::getLineWidth()
+{
+	return m_pUI->getLineWidth();
+}
+
+// Return the angle with the line brush
+int ImpressionistDoc::getLineAngle()
+{
+	return m_pUI->getLineAngle();
+}
+
+// Return the alpha value with the brush
+double ImpressionistDoc::getAlpha()
+{
+	return m_pUI->getAlpha();	
+}
+
+// Set brush size
+void ImpressionistDoc::setSize(int size)
+{
+	m_pUI->setSize(size);
+}
+
+// set stroke direction type
+void ImpressionistDoc::setStrokeDirect(int type)
+{
+	switch (type)
+	{
+		case STROKE_SLIDER:
+		{
+			lineDirectPattern = STROKE_SLIDER;
+			//printf("lineDirectPattern is %d/n", lineDirectPattern);
+			break;
+		}
+		case STROKE_GRAD:
+		{
+			lineDirectPattern = STROKE_GRAD;
+			//printf("lineDirectPattern is %d/n", lineDirectPattern);
+			break;
+		}
+		case STROKE_BRUSH:
+		{
+			lineDirectPattern = STROKE_BRUSH;
+			//printf("lineDirectPattern is %d/n", lineDirectPattern);
+			break;
+		}
+		default:
+		{
+			printf("The stroke direction is not identifiable\n");
+		}
+	}
+}
+
+// set line brush width
+void ImpressionistDoc::setLineWidth(int width)
+{
+	m_pUI->setLineWidth(width);
+}
+
+// set line brush angle
+void ImpressionistDoc::setLineAngle(int angle)
+{
+	m_pUI->setLineAngle(angle);
+}
+
+
+// set alpha value
+void ImpressionistDoc::setAlpha(double alpha)
+{
+
+}
+
+
+
+// End by Sherry
 
 //---------------------------------------------------------
 // Load the specified image

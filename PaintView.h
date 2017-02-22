@@ -30,6 +30,13 @@ public:
 
 	void RestoreContent();
 
+	// Add by sherry
+	int GetStartRow();
+	int GetEndRow();
+	int GetStartCol();
+	int GetEndCol();
+	int GetDrawHeight();
+
 	ImpressionistDoc *m_pDoc;
 
 private:

@@ -8,6 +8,8 @@
 #include "impressionistDoc.h"
 #include "originalview.h"
 
+
+
 #ifndef WIN32
 #define min(a, b)	( ( (a)<(b) ) ? (a) : (b) )
 #endif

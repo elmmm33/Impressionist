@@ -8,7 +8,7 @@
 //
 
 #include <stdlib.h>
-
+#include <cmath>
 // Each brush type has an associated constant.
 enum
 {
@@ -21,6 +21,13 @@ enum
 	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 
+enum
+{
+	STROKE_SLIDER = 0,
+	STROKE_GRAD,
+	STROKE_BRUSH,
+	NUM_STROKE_DIRECTION
+};
 
 class ImpressionistDoc; // Pre-declaring class
 
