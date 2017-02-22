@@ -59,6 +59,9 @@ public:
 
 	// Return the name of the brush (not used in this version).
 	char* BrushName( void );
+
+	// Save Paint view
+	//void savePaint();
 	
 	static int			c_nBrushCount;	// How many brushes we have,
 	static ImpBrush**	c_pBrushes;		// and what they are.

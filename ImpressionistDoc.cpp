@@ -166,11 +166,6 @@ void ImpressionistDoc::setLineAngle(int angle)
 }
 
 
-// set alpha value
-void ImpressionistDoc::setAlpha(double alpha)
-{
-
-}
 
 
 

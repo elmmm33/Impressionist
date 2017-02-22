@@ -36,7 +36,8 @@ public:
 	void		setStrokeDirect(int type);		//set brush direction
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
-	void		setAlpha(double alpha);
+	//void		setAlpha(double alpha);
+
 
 	//end
 
