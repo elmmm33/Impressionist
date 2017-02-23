@@ -32,13 +32,12 @@ public:
 
 	ImpressionistDoc*	m_pDoc;
 
-	/*
+
 	//add by sherry
-	bool isEvent;
-	int eventToDo;
-	Point cursor;
+	bool test;
+	Point marker;
 	// end
-	*/
+
 
 private:
 	int	m_nWindowWidth, 

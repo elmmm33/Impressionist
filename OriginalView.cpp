@@ -8,8 +8,6 @@
 #include "impressionistDoc.h"
 #include "originalview.h"
 
-
-
 #ifndef WIN32
 #define min(a, b)	( ( (a)<(b) ) ? (a) : (b) )
 #endif
@@ -77,6 +75,16 @@ void OriginalView::draw()
 		glDrawBuffer( GL_BACK );
 		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
 
+		if (test) {										//e
+			glBegin(GL_QUADS);
+			glVertex2i(marker.x + 2, marker.y - 2);
+			glVertex2i(marker.x - 2, marker.y - 2);
+			glVertex2i(marker.x - 2, marker.y + 2);
+			glVertex2i(marker.x + 2, marker.y + 2);
+			glColor3f(1.0, 0.0, 0.0);
+			glEnd();
+			test = false;	
+		}															//e
 	}
 			
 	glFlush();
