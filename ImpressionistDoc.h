@@ -31,13 +31,14 @@ public:
 	int		getLineWidth();				// get the Line width
 	int		getLineAngle();				// get the Line angle
 	double getAlpha();					// get alpha value
+	double	getR_Color();				//get RGB color
+	double	getG_Color();
+	double	getB_Color();
 
 	void		setSize(int size);				// set the UI size
 	void		setStrokeDirect(int type);		//set brush direction
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
-	//void		setAlpha(double alpha);
-
 
 	//end
 

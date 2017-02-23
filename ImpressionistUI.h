@@ -11,6 +11,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/fl_file_chooser.H>		// FLTK file chooser
+#include <FL/Fl_Color_Chooser.H> // FLTK color chooser
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Value_Slider.H>
 #include <FL/Fl_Choice.H>
@@ -39,6 +40,12 @@ public:
 	Fl_Choice*			m_BrushTypeChoice;
 
 	// Add by sherry
+	// Add color paint windows to choose color
+	Fl_Window*			m_ColorWindow;
+	Fl_Color_Chooser*	m_ColorChooser;
+	// end
+
+	// Add by sherry
 	Fl_Choice*		m_StrokeDirectionChoice;			// for choosing the brush direction
 	// end
 
@@ -62,15 +69,19 @@ public:
 	int		getSize();
 
 	//add by sherry
-	int		getLineWidth();				// get the Line width
-	int		getLineAngle();				// get the Line angle
-	double getAlpha();					// get alpha value
+	int			getLineWidth();				// get the Line width
+	int			getLineAngle();				// get the Line angle
+	double	getAlpha();					// get alpha value
+
+	double	getR_Color();
+	double	getG_Color();
+	double	getB_Color();
 	//end
 
 	void		setSize(int size);
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
-	//void		setAlpha(double alpha);
+
 	//end
 
 private:
@@ -82,6 +93,10 @@ private:
 	int		m_nWidth;
 	int		m_nAngle;
 	double		m_nAlpha;
+
+	double m_nRColor;
+	double m_nGColor;
+	double m_nBColor;
 	//end
 
 	// Static class members
@@ -111,6 +126,11 @@ private:
 	static void cb_line_widthSlides(Fl_Widget* o, void* v);
 	static void cb_line_angleSlides(Fl_Widget* o, void* v);
 	static void cb_alphaSlides(Fl_Widget* o, void* v);
+
+	// for color chooser dialog
+	static void cb_color_window(Fl_Menu_* o, void* v);
+	static  void cb_color_chooser(Fl_Widget* o, void* v);
+
 
 };
 
