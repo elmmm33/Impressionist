@@ -128,6 +128,24 @@ double ImpressionistDoc::getAlpha()
 	return m_pUI->getAlpha();	
 }
 
+
+// Return RGB color value
+double ImpressionistDoc::getR_Color()
+{
+	return m_pUI->getR_Color();
+}
+
+double ImpressionistDoc::getG_Color()
+{
+	return m_pUI->getB_Color();
+}
+
+double ImpressionistDoc::getB_Color()
+{
+	return m_pUI->getG_Color();
+}
+
+
 // Set brush size
 void ImpressionistDoc::setSize(int size)
 {
