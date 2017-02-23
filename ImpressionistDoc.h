@@ -9,7 +9,7 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
-
+#include <stack>
 class ImpressionistUI;
 
 class ImpressionistDoc 
@@ -60,6 +60,7 @@ public:
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
 
+	std::stack<unsigned char*>	m_ucPainting_Undo;
 	// Add by Sherry
 	int lineDirectPattern;				// dafult value for the direction of stroke
 	int* m_ucAngle;						// parametersf for line brush angle	

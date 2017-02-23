@@ -60,3 +60,14 @@ void ImpBrush::SetColor (const Point source)
 	glColor4ubv(color);
 
 }
+
+void ImpBrush::savePaintForUndo() 
+{
+	ImpressionistDoc* pDoc = GetDocument();
+
+	int dimension = pDoc->m_nPaintWidth * pDoc->m_nPaintHeight * 3;
+	unsigned char* undo = new unsigned char[dimension];
+
+	memcpy(undo, pDoc->m_ucPainting, dimension);
+	pDoc->m_ucPainting_Undo.push(undo);
+}
