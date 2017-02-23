@@ -25,7 +25,8 @@ public:
 
 	int		clearCanvas();                  // called by the UI to clear the drawing canvas
 	void		setBrushType(int type);			// called by the UI to set the brushType
-	
+	void		doneAutoPaint(ImpBrush* brush, int space);
+
 	//add by sherry
 	int		getSize();						// get the UI size
 	int		getLineWidth();				// get the Line width
@@ -34,6 +35,8 @@ public:
 	double	getR_Color();				//get RGB color
 	double	getG_Color();
 	double	getB_Color();
+
+	int		getPaintSpace();
 
 	void		setSize(int size);				// set the UI size
 	void		setStrokeDirect(int type);		//set brush direction

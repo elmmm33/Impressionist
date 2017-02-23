@@ -17,6 +17,7 @@
 #define RIGHT_MOUSE_DOWN	4
 #define RIGHT_MOUSE_DRAG	5
 #define RIGHT_MOUSE_UP		6
+#define AUTO_PAINT					7
 
 
 #ifndef WIN32
@@ -167,6 +168,14 @@ void PaintView::draw()
 			glClear(GL_BACK);
 			break;
 		}
+		case AUTO_PAINT:
+		{
+			m_pDoc->doneAutoPaint(m_pDoc->m_pCurrentBrush, m_pDoc->getPaintSpace());
+			SaveCurrentContent();
+			RestoreContent();
+			break;
+		}
+
 		default:
 		{
 				printf("Unknown event!!\n");
@@ -183,6 +192,12 @@ void PaintView::draw()
 
 }
 
+void PaintView::DoneAutoPaint()
+{
+	isAnEvent = 1;
+	eventToDo = AUTO_PAINT;
+	redraw();
+}
 
 int PaintView::handle(int event)
 {
@@ -248,6 +263,7 @@ int PaintView::handle(int event)
 
 	return 1;
 }
+
 
 void PaintView::refresh()
 {

@@ -326,6 +326,20 @@ void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
 }
 // end color choose dialog
 
+// The auto paint
+void ImpressionistUI::cb_autoPaint(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc *pDoc = pUI->getDocument();
+	
+	pUI->m_paintView->DoneAutoPaint();
+	
+}
+
+void ImpressionistUI::cb_paintSlider(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nPaintSpace = int(((Fl_Slider *)o)->value());
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -410,6 +424,22 @@ double ImpressionistUI::getB_Color()
 {
 	return m_nBColor;
 }
+
+int ImpressionistUI::getPaintSpace()
+{
+	return m_nPaintSpace;
+}
+
+/*
+void ImpressionistUI::setPaintSpace(int spacesize)
+{
+	m_nPaintSpace = spacesize;
+	if (spacesize >= 0 && spacesize <= 16)
+	{
+		m_PaintSpaceSlider->value(m_nPaintSpace);
+	};
+}
+*/
 
 // Set the line brush width
 void ImpressionistUI::setLineWidth(int width)
@@ -531,6 +561,8 @@ ImpressionistUI::ImpressionistUI() {
 		m_nAngle = 0;
 		m_nAlpha = 1;
 
+		m_nPaintSpace = 5;
+
 		// init color values
 		m_nRColor = 1.0;
 		m_nGColor = 1.0;
@@ -623,6 +655,25 @@ ImpressionistUI::ImpressionistUI() {
 		m_StrokeDirectionChoice->deactivate();
 		
 		// end  the simple attribute UI
+		
+		// Start auto painting button
+		m_PaintSpaceSlider = new Fl_Value_Slider(10, 240, 250, 20, "Space");
+		m_PaintSpaceSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_PaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
+		m_PaintSpaceSlider->labelfont(FL_COURIER);
+		m_PaintSpaceSlider->labelsize(12);
+		m_PaintSpaceSlider->minimum(1);
+		m_PaintSpaceSlider->maximum(16);
+		m_PaintSpaceSlider->step(1);
+		m_PaintSpaceSlider->value(m_nPaintSpace);
+		m_PaintSpaceSlider->align(FL_ALIGN_RIGHT);
+		m_PaintSpaceSlider->callback(cb_paintSlider);
+
+		m_Paint = new Fl_Button(320, 240, 60, 20, "Paint");
+		m_Paint->user_data((void*)(this));
+		m_Paint->callback(cb_autoPaint);
+
+		// End auto Painting
 
 
 
