@@ -43,10 +43,13 @@ public:
 	// Add color paint windows to choose color
 	Fl_Window*			m_ColorWindow;
 	Fl_Color_Chooser*	m_ColorChooser;
-	// end
 
-	// Add by sherry
-	Fl_Choice*		m_StrokeDirectionChoice;			// for choosing the brush direction
+	// Add stroke direciton choice botton
+	Fl_Choice*		m_StrokeDirectionChoice;		
+
+	Fl_Slider*		m_PaintSpaceSlider;
+	Fl_Button*		m_Paint;
+
 	// end
 
 	Fl_Slider*			m_BrushSizeSlider;
@@ -73,30 +76,33 @@ public:
 	int			getLineAngle();				// get the Line angle
 	double	getAlpha();					// get alpha value
 
-	double	getR_Color();
-	double	getG_Color();
-	double	getB_Color();
-	//end
-
 	void		setSize(int size);
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
 
-	//end
+	int		getPaintSpace();			//	get the auto paint space
+	//void	setPaintSpace(int spacesize);			// set the auto paint space
+
+	// For get rgb color value
+	double	getR_Color();
+	double	getG_Color();
+	double	getB_Color();
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
 
 	// All attributes here
-	int		m_nSize;
+	int			m_nSize;
 	//add by sherry
-	int		m_nWidth;
-	int		m_nAngle;
-	double		m_nAlpha;
+	int			m_nWidth;
+	int			m_nAngle;
+	double	m_nAlpha;
 
-	double m_nRColor;
-	double m_nGColor;
-	double m_nBColor;
+	double	m_nRColor;
+	double	m_nGColor;
+	double	m_nBColor;
+
+	int			m_nPaintSpace;
 	//end
 
 	// Static class members
@@ -130,6 +136,10 @@ private:
 	// for color chooser dialog
 	static void cb_color_window(Fl_Menu_* o, void* v);
 	static  void cb_color_chooser(Fl_Widget* o, void* v);
+
+	// for auto-paint 
+	static void cb_autoPaint(Fl_Widget* o, void* v);
+	static void cb_paintSlider(Fl_Widget* o, void* v);
 
 
 };
