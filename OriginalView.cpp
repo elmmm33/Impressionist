@@ -75,6 +75,8 @@ void OriginalView::draw()
 		glDrawBuffer( GL_BACK );
 		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
 
+
+
 		if (test) {										//e
 			glBegin(GL_QUADS);
 			glVertex2i(marker.x + 2, marker.y - 2);

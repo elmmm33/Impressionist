@@ -33,11 +33,20 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucBitmap		= NULL;
 	m_ucPainting	= NULL;
 
+	//m_iGradient = NULL;
+
+	m_ucBuffer = NULL;
+	m_ucT1 = NULL;
+	m_ucT2 = NULL;
+	m_ucEdgeHidden = NULL;
+	m_ucEdge100 = NULL;
+
 	// initialize the pramaters by sherry
 	m_ucAngle = NULL;
 	m_ucGray = NULL;
 	m_ucBlur = NULL;
 	lineDirectPattern = 0;
+
 
 
 	// create one instance of each brush
@@ -150,6 +159,12 @@ int ImpressionistDoc::getPaintSpace()
 	return m_pUI->getPaintSpace();
 }
 
+int ImpressionistDoc::getEdgeAccuracy()
+{
+	return m_pUI->getEdgeAccuracy();
+}
+
+
 // Set brush size
 void ImpressionistDoc::setSize(int size)
 {
@@ -198,6 +213,10 @@ void ImpressionistDoc::setLineAngle(int angle)
 	m_pUI->setLineAngle(angle);
 }
 
+void ImpressionistDoc::setEdgeAccuracy(unsigned char accuracy)
+{
+	m_pUI->setEdgeAccuracy(accuracy);
+}
 
 void ImpressionistDoc::doneAutoPaint(ImpBrush* currentbrush, int space)
 {
@@ -213,8 +232,6 @@ void ImpressionistDoc::doneAutoPaint(ImpBrush* currentbrush, int space)
 		currentbrush->BrushEnd(end_p, end_p);
 	};
 }
-
-
 // End by Sherry
 
 //---------------------------------------------------------
@@ -248,20 +265,40 @@ int ImpressionistDoc::loadImage(char *iname)
 	if (m_ucGray) delete[] m_ucGray;
 	if (m_ucBlur) delete[] m_ucBlur;
 
+	if (m_ucT1) delete[] m_ucT1;
+	if (m_ucT2)	 delete[] m_ucT2;
+	if (m_ucEdgeHidden) delete[] m_ucEdgeHidden;
+	if (m_ucEdge100) delete[] m_ucEdge100;
+	if (m_ucBuffer)	delete[] m_ucBuffer;
 
+	while (!m_ucPainting_Undo.empty()) {
+		unsigned char* undo = m_ucPainting_Undo.top();
+		delete[] undo;
+		m_ucPainting_Undo.pop();
+	}
 	m_ucBitmap		= data;
+
 
 	m_ucPainting = new unsigned char[width*height * 3];
 	m_ucGray = new unsigned char[width*height * 3];
 	m_ucBlur = new unsigned char[width*height * 3];
 	m_ucAngle = new int[width*height];
 
+	m_ucT1 = new double[width*height * sizeof(double)];
+	m_ucT2 = new double[width*height * sizeof(double)];
+	m_ucEdgeHidden = new unsigned char[width*height * 3];
+	m_ucEdge100 = new unsigned char[width*height * 3];
+	m_ucBuffer = new unsigned char[width*height * 3];
+
+
+
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);
-	memset(m_ucAngle, 0, width*height * sizeof(int));
 	memset(m_ucGray, 0, width*height * 3);
 	memset(m_ucBlur, 0, width*height * 3);
+	memset(m_ucBuffer, 0, width*height * 3);
+	memset(m_ucAngle, 0, width*height * sizeof(int));
 
 	// add by sherry
 	for (int i = 0; i < width*height; i++)
@@ -326,11 +363,43 @@ int ImpressionistDoc::loadImage(char *iname)
 				angle = temp / (2 * PI) * 360;
 			}
 
-			angle = (angle + 90) % 360;
-			m_ucAngle[i + j*width] = angle;
+				angle = (angle + 90) % 360;
+				m_ucAngle[i + j*width] = angle;
+		}
+	// End angle
+	
+	//Start edge clip
+	//Create temp1 and temp2 and the m_ucEdgeHidden value
+	for (int i = 1; i<width - 1; i++)
+		for (int j = 1; j<height - 1; j++)
+		{
+			double sum1 = 0;
+			double sum2 = 0;
+			for (int l = 0; l<3; l++)
+				for (int k = 0; k<3; k++)
+				{
+					int x = i - 1 + k;
+					int y = j - 1 + l;
 
+					sum1 += (m_ucBlur[(x + y*width) * 3] * kernel1[l][k]);
+					sum2 += (m_ucBlur[(x + y*width) * 3] * kernel2[l][k]);
+				}
+			double blurVal1 = sum1 / 9;
+			double blurVal2 = sum2 / 9;
+
+			for (int m = 0; m<3; m++)
+			{
+				m_ucT1[(i + j*width) * 3 + m] = blurVal1;
+				m_ucT2[(i + j*width) * 3 + m] = blurVal2;
+
+				double val1 = m_ucT1[(i + j*width) * 3 + m];
+				double val2 = m_ucT2[(i + j*width) * 3 + m];
+				m_ucEdgeHidden[(i + j*width) * 3 + m] = sqrt(val1*val1 + val2*val2);
+
+			}
 		}
 
+		
 
 	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(), 
 								m_pUI->m_mainWindow->y(), 
@@ -412,3 +481,32 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 	return GetOriginalPixel( p.x, p.y );
 }
 
+
+void ImpressionistDoc::getThresholdImage()
+{
+	//printf("accuracy: %d \n",getEdgeAccuracy());
+	//printf("call funciton getThresholdImage");
+	for (int j = 1; j<m_nHeight - 1; j++)
+		for (int i = 1; i<m_nWidth - 1; i++)
+		{
+			for (int m = 0; m<3; m++)
+			{
+				unsigned char val = m_ucEdgeHidden[(i + j*m_nWidth) * 3 + m];
+				if (val >= getEdgeAccuracy())
+				{
+					m_ucEdge100[(i + j*m_nWidth) * 3 + m] = 255;
+				}
+				else
+				{
+					m_ucEdge100[(i + j*m_nWidth) * 3 + m] = 0;
+				}
+			}
+		}
+
+	memcpy(m_ucBuffer, m_ucEdge100, 3 * m_nWidth*m_nHeight);
+	unsigned char* temp = m_ucBitmap;
+	m_ucBitmap = m_ucBuffer;
+	m_ucBuffer = temp;
+
+	m_pUI->m_origView->refresh();
+}

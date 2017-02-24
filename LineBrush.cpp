@@ -73,9 +73,9 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		case STROKE_GRAD:
 		{
 
-			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			int x = target.x - s_Col;
-			int y = target.y - e_Col;
+			int y = target.y - s_Col;
 			int width = pDoc->m_nWidth;
 			int height = pDoc->m_nHeight;
 
@@ -87,15 +87,22 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		}
 		case STROKE_BRUSH:
 		{
-			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
-			double xDiff = target.x - (pDoc->currentPoint.x);
-			double yDiff = target.y - (pDoc->currentPoint.y);
-
-			pDoc->currentPoint = target;
-
-			if (xDiff != 0) angle = atan2(yDiff, xDiff) / (PI * 2) * 360;
-			else angle = 90;
-			break;
+			int x = target.x - s_Col;
+			int y = target.y - s_Row;
+			int width = pDoc->m_nWidth;
+			int height = pDoc->m_nHeight;
+			if (x <= 0 || x>width)
+			{
+				angle = 90;
+			}
+			else if (y <= 0 || y>height)
+			{
+				angle = 0;
+			}
+			else
+			{
+				angle = pDoc->m_ucAngle[x + y*width];
+			}
 		}
 		default:
 		{
@@ -124,10 +131,15 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	{
 		if (axis[i]<s_Row) axis[i] = s_Row;
 		if (axis[i]>e_Row) axis[i] = e_Row;
-		if (axis[i-1]<s_Col) axis[i-1] = s_Col;
-		if (axis[i-1]>e_Col) axis[i-1] = e_Col;
 	}
-	
+
+/*
+	for (int i = 1; i<8; i += 2)
+	{
+		if (axis[i]<s_Row) axis[i] = s_Row;
+		if (axis[i]>e_Row) axis[i] = e_Row;
+	}
+	*/
 
 
 	glBegin(GL_POLYGON);

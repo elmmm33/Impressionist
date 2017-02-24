@@ -25,24 +25,30 @@ public:
 
 	int		clearCanvas();                  // called by the UI to clear the drawing canvas
 	void		setBrushType(int type);			// called by the UI to set the brushType
-	void		doneAutoPaint(ImpBrush* brush, int space);
+
+	void		doneAutoPaint(ImpBrush* brush, int space);		// for auto painting
 
 	//add by sherry
-	int		getSize();						// get the UI size
-	int		getLineWidth();				// get the Line width
-	int		getLineAngle();				// get the Line angle
-	double getAlpha();					// get alpha value
+	int			getSize();						// get the UI size
+	int			getLineWidth();				// get the Line width
+	int			getLineAngle();				// get the Line angle
+	double	getAlpha();					// get alpha value
 	double	getR_Color();				//get RGB color
 	double	getG_Color();
 	double	getB_Color();
+	
+	void	getThresholdImage();
 
 	int		getPaintSpace();
+
+	int		getEdgeAccuracy();
+	void	setEdgeAccuracy(unsigned char accuracy);
 
 	void		setSize(int size);				// set the UI size
 	void		setStrokeDirect(int type);		//set brush direction
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
-
+	
 	//end
 
 	char*	getImageName();					// get the current image name
@@ -67,6 +73,13 @@ public:
 	unsigned char* m_ucGray;
 	unsigned char* m_ucBlur;
 
+	unsigned char*	m_ucBuffer;
+	double*  m_ucT1;
+	double*  m_ucT2;
+	unsigned char*  m_ucEdgeHidden;
+	unsigned char*  m_ucEdge100;
+	
+
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;	
 	Point currentPoint;		// Add by Sherry
@@ -82,7 +95,6 @@ public:
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
-
 
 private:
 	char			m_imageName[256];

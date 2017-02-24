@@ -49,8 +49,12 @@ public:
 
 	Fl_Slider*		m_PaintSpaceSlider;
 	Fl_Button*		m_Paint;
-
 	// end
+
+	// Add edge clipping button
+	//Fl_Light_Button*	m_EdgeClip;
+	Fl_Slider*				m_EdgeAccuracySlider;
+	Fl_Button*				m_EdgeDone;
 
 	Fl_Slider*			m_BrushSizeSlider;
 	Fl_Button*          m_ClearCanvasButton;
@@ -81,7 +85,9 @@ public:
 	void		setLineAngle(int angle);			//set the Linea angle
 
 	int		getPaintSpace();			//	get the auto paint space
-	//void	setPaintSpace(int spacesize);			// set the auto paint space
+	
+	unsigned char	getEdgeAccuracy();
+	void		setEdgeAccuracy(unsigned char accuracy);
 
 	// For get rgb color value
 	double	getR_Color();
@@ -98,11 +104,15 @@ private:
 	int			m_nAngle;
 	double	m_nAlpha;
 
+	// For color choosing
 	double	m_nRColor;
 	double	m_nGColor;
 	double	m_nBColor;
 
 	int			m_nPaintSpace;
+
+	// For Edge Clipping
+	unsigned char	m_nEdgeAccuracy;
 	//end
 
 	// Static class members
@@ -141,6 +151,10 @@ private:
 	static void cb_autoPaint(Fl_Widget* o, void* v);
 	static void cb_paintSlider(Fl_Widget* o, void* v);
 
+	// for edge clipping
+	//static void cb_edge_clipping(Fl_Widget* o, void* v);
+	static void	cb_edge_accuracy(Fl_Widget* o, void* v);
+	static void cb_edge_done(Fl_Widget* o, void* v);
 
 };
 
