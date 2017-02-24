@@ -33,12 +33,13 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 void LineBrush::BrushMove(const Point source, const Point target)
 {
 	ImpressionistDoc* pDoc = GetDocument();
-	ImpressionistUI* dlg = pDoc->m_pUI;
 
-	if (pDoc == NULL) {
+		if (pDoc == NULL) {
 		printf("PointBrush::BrushMove  document is NULL\n");
 		return;
 	}
+
+	ImpressionistUI* dlg = pDoc->m_pUI;
 
 	int width = GetDocument()->getLineWidth();
 	double halfWidth = width / 2.0;   
@@ -51,10 +52,10 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int windowH = dlg->m_mainWindow->h();
 	int drawHeight = dlg->m_paintView->GetDrawHeight();
 
-	int startCol = dlg->m_paintView->GetStartCol();
-	int endCol = dlg->m_paintView->GetEndCol();
-	int startRow = dlg->m_paintView->GetStartRow() + windowH - drawHeight - 25;
-	int endRow = startRow + drawHeight;
+	int s_Col = dlg->m_paintView->GetStartCol();
+	int e_Col = dlg->m_paintView->GetEndCol();
+	int s_Row = dlg->m_paintView->GetStartRow() + windowH - drawHeight - 25;
+	int e_Row = s_Row + drawHeight;
 
 	// started line angle
 	const double PI = 3.141592653589793;
@@ -71,14 +72,14 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		case STROKE_GRAD:
 		{
 			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
-			int x = target.x - startCol;
-			int y = target.y - startRow;
-			int width = pDoc->m_nWidth;
-			int height = pDoc->m_nHeight;
-
-			if (x <= 0 || x > width) angle = 90;
-			else if (y <= 0 || y > height) angle = 0;
-			else angle = pDoc->m_ucAngle[x + y*width];
+			int w = pDoc->m_nWidth;
+			int h = pDoc->m_nHeight;	
+			int diffy = target.y - s_Row;
+			int diffx = target.x - s_Col;
+			
+			if (diffx > 0 && diffx <= w) angle = 90;
+			else if (diffy > 0 && diffy <= h) angle = 0;
+			else angle = pDoc->m_ucAngle[diffy*w + diffx];
 			break;
 		}
 		case STROKE_BRUSH:
@@ -89,8 +90,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 
 			pDoc->currentPoint = target;
 
-			if (xDiff == 0) angle = 90;
-			else angle = atan2(yDiff, xDiff) / (2 * PI) * 360;
+			if (xDiff != 0) angle = atan2(yDiff, xDiff) / (PI * 2) * 360;
+			else angle = 90;
 			break;
 		}
 		default:
@@ -116,17 +117,14 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	axis[6] = target.x + halfLength*cosV - halfWidth*sinV;
 	axis[7] = target.y + halfLength*sinV + halfWidth*cosV;
 
-
-	for (int i = 0; i<8; i += 2)
-	{
-		if (axis[i]<startCol) axis[i] = startCol;
-		if (axis[i]>endCol) axis[i] = endCol;
-	}
 	for (int i = 1; i<8; i += 2)
 	{
-		if (axis[i]<startRow) axis[i] = startRow;
-		if (axis[i]>endRow) axis[i] = endRow;
+		if (axis[i]<s_Row) axis[i] = s_Row;
+		if (axis[i]>e_Row) axis[i] = e_Row;
+		if (axis[i-1]<s_Col) axis[i-1] = s_Col;
+		if (axis[i-1]>e_Col) axis[i-1] = e_Col;
 	}
+	
 
 
 	glBegin(GL_POLYGON);

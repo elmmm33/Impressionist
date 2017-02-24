@@ -42,22 +42,14 @@ void S_LineBrush::BrushMove(const Point source, const Point target)
 
 	int length;
 	glGetIntegerv(GL_POINT_SIZE, &length);
-	double halfLength = length / 2.0;
-	double startXS = source.x - halfLength;
-	double startYS = source.y - halfLength;
-	double startXT = target.x - halfLength;
-	double startYT = target.y - halfLength;
 
 
 	for (int i = 0; i<length; i++)
 		for (int j = 0; j<length; j++)
 		{
-			int seed = rand() % 200;
-			if (seed<1)
+			if ((rand() % 200)<1)
 			{
-				Point newS = Point(startXS + i, startYS + j);
-				Point newT = Point(startXT + i, startYT + j);
-				ImpBrush::c_pBrushes[BRUSH_LINES]->BrushMove(newS, newT);
+				ImpBrush::c_pBrushes[BRUSH_LINES]->BrushMove(Point((source.x - length / 2.0) + i, (source.y - length / 2.0) + j), Point((target.x - length / 2.0) + i, (target.y - length / 2.0) + j));
 			}
 		}
 }

@@ -52,26 +52,25 @@ void CircleBrush::BrushMove(const Point source, const Point target)
 	int windowH = dlg->m_mainWindow->h();
 	int drawHeight = dlg->m_paintView->GetDrawHeight();
 
-	int startCol = dlg->m_paintView->GetStartCol();
-	int endCol = dlg->m_paintView->GetEndCol();
-	int startRow = dlg->m_paintView->GetStartRow() + windowH - drawHeight - 25;
-	int endRow = startRow + drawHeight;
+	int s_Col = dlg->m_paintView->GetStartCol();
+	int s_Row = dlg->m_paintView->GetStartRow() + windowH - drawHeight - 25;
+	int e_Col = dlg->m_paintView->GetEndCol();
+	int e_Row = s_Row + drawHeight;
 
 	glBegin(GL_TRIANGLE_FAN);
 	SetColor(source);
 	glVertex2f(x, y);
 
 	for (int i = 0; i <= triangles; i++) {
-		double xNew = x + (radius * cos(i * t_Pi / triangles));
-		double yNew = y + (radius * sin(i * t_Pi / triangles));
+		double n_x = x + (radius * cos(i * t_Pi / triangles));
+		double n_y = y + (radius * sin(i * t_Pi / triangles));
 
-		if (xNew<startCol || xNew>endCol || yNew<startRow || yNew>endRow)
+		if (n_x<s_Col || n_y<s_Row || n_x>e_Col || n_y>e_Row)
 		{
-			xNew = x;
-			yNew = y;
+			glVertex2f(x, y);
 		}
-
-		glVertex2f(xNew, yNew);
+		glVertex2f(n_x, n_y);
+					
 	}
 	glEnd();
 }
