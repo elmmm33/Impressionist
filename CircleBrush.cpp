@@ -23,6 +23,7 @@ void CircleBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
+	savePaintForUndo();
 	int size = pDoc->getSize();
 
 

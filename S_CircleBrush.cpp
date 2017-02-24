@@ -27,6 +27,7 @@ void S_CircleBrush::BrushBegin(const Point source, const Point target)
 	size = pDoc->getSize();
 	num_points = 3;
 	srand((unsigned int)(time(0)));
+
 	BrushMove(source, target);
 }
 

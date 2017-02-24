@@ -128,6 +128,28 @@ double ImpressionistDoc::getAlpha()
 	return m_pUI->getAlpha();	
 }
 
+
+// Return RGB color value
+double ImpressionistDoc::getR_Color()
+{
+	return m_pUI->getR_Color();
+}
+
+double ImpressionistDoc::getG_Color()
+{
+	return m_pUI->getB_Color();
+}
+
+double ImpressionistDoc::getB_Color()
+{
+	return m_pUI->getG_Color();
+}
+
+int ImpressionistDoc::getPaintSpace()
+{
+	return m_pUI->getPaintSpace();
+}
+
 // Set brush size
 void ImpressionistDoc::setSize(int size)
 {
@@ -177,7 +199,20 @@ void ImpressionistDoc::setLineAngle(int angle)
 }
 
 
-
+void ImpressionistDoc::doneAutoPaint(ImpBrush* currentbrush, int space)
+{
+	for (int i = 0; i < m_nWidth; i+=space)
+	{
+		for (int j = 0; j < m_nHeight; j+= space)
+		{
+			Point p(i, j);
+			if (i == 0 && j == 0) currentbrush->BrushBegin(p, p);
+			else currentbrush->BrushMove(p, p);
+		}
+		Point end_p(m_nWidth, m_nHeight);
+		currentbrush->BrushEnd(end_p, end_p);
+	};
+}
 
 
 // End by Sherry

@@ -49,6 +49,7 @@ void ImpBrush::SetColor (const Point source)
 	GLubyte color[4];
 	memcpy ( color, pDoc->GetOriginalPixel( source ), 3 );
 	
+
 	double chosen_R = pDoc->getR_Color();
 	double chosen_G = pDoc->getG_Color();
 	double chosen_B = pDoc->getB_Color();
@@ -59,4 +60,15 @@ void ImpBrush::SetColor (const Point source)
 	color[3] = pDoc->getAlpha() * 255;
 	glColor4ubv(color);
 
+}
+
+void ImpBrush::savePaintForUndo() 
+{
+	ImpressionistDoc* pDoc = GetDocument();
+
+	int dimension = pDoc->m_nPaintWidth * pDoc->m_nPaintHeight * 3;
+	unsigned char* undo = new unsigned char[dimension];
+
+	memcpy(undo, pDoc->m_ucPainting, dimension);
+	pDoc->m_ucPainting_Undo.push(undo);
 }

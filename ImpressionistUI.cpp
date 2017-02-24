@@ -311,6 +311,36 @@ void ImpressionistUI::cb_strokeDirection(Fl_Widget* o, void* v)
 	pDoc->setStrokeDirect(type);
 }
 
+
+// The color choose dialog
+void ImpressionistUI::cb_color_window(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_ColorWindow->show();
+}
+
+void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nRColor = ((Fl_Color_Chooser*)o)->r();
+	((ImpressionistUI*)(o->user_data()))->m_nGColor = ((Fl_Color_Chooser*)o)->g();
+	((ImpressionistUI*)(o->user_data()))->m_nBColor = ((Fl_Color_Chooser*)o)->b();
+}
+// end color choose dialog
+
+// The auto paint
+void ImpressionistUI::cb_autoPaint(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc *pDoc = pUI->getDocument();
+	
+	pUI->m_paintView->DoneAutoPaint();
+	
+}
+
+void ImpressionistUI::cb_paintSlider(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nPaintSpace = int(((Fl_Slider *)o)->value());
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -379,6 +409,38 @@ double ImpressionistUI::getAlpha()
 	return m_nAlpha;
 }
 
+// Return Color
+double ImpressionistUI::getR_Color()
+{
+	return m_nRColor;
+}
+
+double ImpressionistUI::getG_Color()
+{
+	return m_nGColor;
+}
+
+double ImpressionistUI::getB_Color()
+{
+	return m_nBColor;
+}
+
+int ImpressionistUI::getPaintSpace()
+{
+	return m_nPaintSpace;
+}
+
+/*
+void ImpressionistUI::setPaintSpace(int spacesize)
+{
+	m_nPaintSpace = spacesize;
+	if (spacesize >= 0 && spacesize <= 16)
+	{
+		m_PaintSpaceSlider->value(m_nPaintSpace);
+	};
+}
+*/
+
 // Set the line brush width
 void ImpressionistUI::setLineWidth(int width)
 {
@@ -427,13 +489,14 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
-		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
+		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes },
 		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 		
+		{ "&Colors...",	FL_ALT + 'k',(Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
+
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
-
-	{ "&Help",		0, 0, 0, FL_SUBMENU },
+		{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
 
@@ -493,11 +556,26 @@ ImpressionistUI::ImpressionistUI() {
 		m_mainWindow->end();
 
 		// init values
-
 		m_nSize = 10;
 		m_nWidth = 1;
 		m_nAngle = 0;
 		m_nAlpha = 1;
+
+		m_nPaintSpace = 5;
+
+		// init color values
+		m_nRColor = 1.0;
+		m_nGColor = 1.0;
+		m_nBColor = 1.0;
+
+		// color dialog definition
+		m_ColorWindow = new Fl_Window(400, 325, "Color Dialog");
+		m_ColorChooser = new Fl_Color_Chooser(10, 20, 320, 300, "Color Blending");
+		m_ColorChooser->user_data((void*)(this));
+		m_ColorChooser->rgb(m_nRColor, m_nGColor, m_nBColor);
+		m_ColorChooser->callback(cb_color_chooser);
+		m_ColorWindow->end();
+
 
 		// brush dialog definition
 		m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -575,8 +653,29 @@ ImpressionistUI::ImpressionistUI() {
 		m_LineWidthSlider->deactivate();
 		m_LineAngleSlider->deactivate();
 		m_StrokeDirectionChoice->deactivate();
+		
+		// end  the simple attribute UI
+		
+		// Start auto painting button
+		m_PaintSpaceSlider = new Fl_Value_Slider(10, 240, 250, 20, "Space");
+		m_PaintSpaceSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_PaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
+		m_PaintSpaceSlider->labelfont(FL_COURIER);
+		m_PaintSpaceSlider->labelsize(12);
+		m_PaintSpaceSlider->minimum(1);
+		m_PaintSpaceSlider->maximum(16);
+		m_PaintSpaceSlider->step(1);
+		m_PaintSpaceSlider->value(m_nPaintSpace);
+		m_PaintSpaceSlider->align(FL_ALIGN_RIGHT);
+		m_PaintSpaceSlider->callback(cb_paintSlider);
 
-		// end 
+		m_Paint = new Fl_Button(320, 240, 60, 20, "Paint");
+		m_Paint->user_data((void*)(this));
+		m_Paint->callback(cb_autoPaint);
+
+		// End auto Painting
+
+
 
 
 

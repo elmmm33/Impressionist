@@ -21,6 +21,7 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
+	savePaintForUndo();
 	int size = pDoc->getSize();
 
 
@@ -65,26 +66,28 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	{
 		case STROKE_SLIDER:
 		{
-			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			angle = pDoc->getLineAngle();	
 			break;
 		}
 		case STROKE_GRAD:
 		{
-			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
-			int w = pDoc->m_nWidth;
-			int h = pDoc->m_nHeight;	
-			int diffy = target.y - s_Row;
-			int diffx = target.x - s_Col;
-			
-			if (diffx > 0 && diffx <= w) angle = 90;
-			else if (diffy > 0 && diffy <= h) angle = 0;
-			else angle = pDoc->m_ucAngle[diffy*w + diffx];
+
+			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			int x = target.x - startCol;
+			int y = target.y - startRow;
+			int width = pDoc->m_nWidth;
+			int height = pDoc->m_nHeight;
+
+			if (x <= 0 || x > width) angle = 90;
+			else if (y <= 0 || y > height) angle = 0;
+			else angle = pDoc->m_ucAngle[x + y*width];
+
 			break;
 		}
 		case STROKE_BRUSH:
 		{
-			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			double xDiff = target.x - (pDoc->currentPoint.x);
 			double yDiff = target.y - (pDoc->currentPoint.y);
 

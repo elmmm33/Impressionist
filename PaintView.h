@@ -31,6 +31,11 @@ public:
 	void RestoreContent();
 
 	// Add by sherry
+
+	// For Done auto paint
+	void DoneAutoPaint();
+
+	// Get the private parameters
 	int GetStartRow();
 	int GetEndRow();
 	int GetStartCol();

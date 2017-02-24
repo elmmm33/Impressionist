@@ -9,7 +9,7 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
-
+#include <stack>
 class ImpressionistUI;
 
 class ImpressionistDoc 
@@ -25,19 +25,23 @@ public:
 
 	int		clearCanvas();                  // called by the UI to clear the drawing canvas
 	void		setBrushType(int type);			// called by the UI to set the brushType
-	
+	void		doneAutoPaint(ImpBrush* brush, int space);
+
 	//add by sherry
 	int		getSize();						// get the UI size
 	int		getLineWidth();				// get the Line width
 	int		getLineAngle();				// get the Line angle
 	double getAlpha();					// get alpha value
+	double	getR_Color();				//get RGB color
+	double	getG_Color();
+	double	getB_Color();
+
+	int		getPaintSpace();
 
 	void		setSize(int size);				// set the UI size
 	void		setStrokeDirect(int type);		//set brush direction
 	void		setLineWidth(int width);		//set the Line width	
 	void		setLineAngle(int angle);			//set the Linea angle
-	//void		setAlpha(double alpha);
-
 
 	//end
 
@@ -56,6 +60,7 @@ public:
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
 
+	std::stack<unsigned char*>	m_ucPainting_Undo;
 	// Add by Sherry
 	int lineDirectPattern;				// dafult value for the direction of stroke
 	int* m_ucAngle;						// parametersf for line brush angle	
