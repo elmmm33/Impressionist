@@ -18,6 +18,8 @@ public:
 	void BrushMove(const Point source, const Point target);
 	void BrushEnd(const Point source, const Point target);
 	char* BrushName(void);
+	void DrawCircle(Point source, Point target, float r);
+	int size, num_points;
 };
 
 #endif
