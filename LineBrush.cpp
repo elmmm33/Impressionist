@@ -74,8 +74,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		{
 
 			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
-			int x = target.x - startCol;
-			int y = target.y - startRow;
+			int x = target.x - s_Col;
+			int y = target.y - e_Col;
 			int width = pDoc->m_nWidth;
 			int height = pDoc->m_nHeight;
 
