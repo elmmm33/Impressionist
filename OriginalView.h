@@ -30,19 +30,21 @@ public:
 
 	void resizeWindow(int width, int height);
 
+
 	ImpressionistDoc*	m_pDoc;
 
+	//enum ViewMode { ORIG_MODE, ANOTHER_MODE, EDGE_MODE } viewMode;
 
-	//add by sherry
+
 	bool test;
 	Point marker;
-	// end
+
 
 
 private:
 	int	m_nWindowWidth, 
 		m_nWindowHeight;
-
+	Point markerPoint;
 };
 
 #endif

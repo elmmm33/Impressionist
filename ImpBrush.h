@@ -29,6 +29,9 @@ enum
 	NUM_STROKE_DIRECTION
 };
 
+const int kernel1[3][3] = { { -1,-2,-1 },{ 0,0,0 },{ 1,2,1 } };
+const int kernel2[3][3] = { { 1,0,-1 },{ 2,0,-2 },{ 1,0,-1 } };
+
 class ImpressionistDoc; // Pre-declaring class
 
 class Point 

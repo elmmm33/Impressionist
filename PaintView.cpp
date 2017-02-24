@@ -175,7 +175,6 @@ void PaintView::draw()
 			RestoreContent();
 			break;
 		}
-
 		default:
 		{
 				printf("Unknown event!!\n");
@@ -198,6 +197,7 @@ void PaintView::DoneAutoPaint()
 	eventToDo = AUTO_PAINT;
 	redraw();
 }
+
 
 int PaintView::handle(int event)
 {

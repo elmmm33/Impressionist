@@ -341,6 +341,20 @@ void ImpressionistUI::cb_paintSlider(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nPaintSpace = int(((Fl_Slider *)o)->value());
 }
 
+// Edge Clipping
+void ImpressionistUI::cb_edge_accuracy(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nEdgeAccuracy = int(((Fl_Slider *)o)->value());
+}
+
+void ImpressionistUI::cb_edge_done(Fl_Widget* o, void* v)
+{
+	//ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc * pDoc = ((ImpressionistUI*)(o->user_data()))->getDocument();
+	pDoc->getThresholdImage();
+
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -430,16 +444,15 @@ int ImpressionistUI::getPaintSpace()
 	return m_nPaintSpace;
 }
 
-/*
-void ImpressionistUI::setPaintSpace(int spacesize)
+unsigned char ImpressionistUI::getEdgeAccuracy()
 {
-	m_nPaintSpace = spacesize;
-	if (spacesize >= 0 && spacesize <= 16)
-	{
-		m_PaintSpaceSlider->value(m_nPaintSpace);
-	};
+	return	m_nEdgeAccuracy;
 }
-*/
+
+void ImpressionistUI::setEdgeAccuracy(unsigned char accuracy)
+{
+	m_nEdgeAccuracy = accuracy;
+}
 
 // Set the line brush width
 void ImpressionistUI::setLineWidth(int width)
@@ -460,16 +473,6 @@ void ImpressionistUI::setLineAngle(int angle)
 	m_LineAngleSlider->value(m_nAngle);
 }
 
-/*
-// Set the brush alpha
-void ImpressionistUI::setAlpha(double alpha)
-{
-	m_nAlpha = alpha;
-	if (alpha <= 1.00) {
-		m_AlphaSlider->value(m_nAlpha);
-	}
-}
-*/
 
 //end
 
@@ -561,7 +564,8 @@ ImpressionistUI::ImpressionistUI() {
 		m_nAngle = 0;
 		m_nAlpha = 1;
 
-		m_nPaintSpace = 5;
+		m_nPaintSpace = 4;
+		m_nEdgeAccuracy = 14;
 
 		// init color values
 		m_nRColor = 1.0;
@@ -649,11 +653,6 @@ ImpressionistUI::ImpressionistUI() {
 		m_AlphaSlider->align(FL_ALIGN_RIGHT);
 		m_AlphaSlider->callback(cb_alphaSlides);
 
-		// default line width slider and angle slider are deactive
-		m_LineWidthSlider->deactivate();
-		m_LineAngleSlider->deactivate();
-		m_StrokeDirectionChoice->deactivate();
-		
 		// end  the simple attribute UI
 		
 		// Start auto painting button
@@ -675,7 +674,30 @@ ImpressionistUI::ImpressionistUI() {
 
 		// End auto Painting
 
+		// Start Edge Clipping button
+		//Slider for edge accuracy
+		m_EdgeAccuracySlider = new Fl_Value_Slider(10, 280, 200, 20, "Edge Accuracy");
+		m_EdgeAccuracySlider->user_data((void*)(this));
+		m_EdgeAccuracySlider->type(FL_HOR_NICE_SLIDER);
+		m_EdgeAccuracySlider->labelfont(FL_COURIER);
+		m_EdgeAccuracySlider->labelsize(12);
+		m_EdgeAccuracySlider->minimum(0);
+		m_EdgeAccuracySlider->maximum(100);
+		m_EdgeAccuracySlider->step(1);
+		m_EdgeAccuracySlider->value(m_nEdgeAccuracy); //not m_nAlpha because scale difference
+		m_EdgeAccuracySlider->align(FL_ALIGN_RIGHT);
+		m_EdgeAccuracySlider->callback(cb_edge_accuracy);
 
+		//Button for extrating edge
+		m_EdgeDone = new Fl_Button(320, 280, 60, 20, "Extract");
+		m_EdgeDone->user_data((void*)(this));
+		m_EdgeDone->callback(cb_edge_done);
+
+		// default line width slider and angle slider are deactive
+		m_LineWidthSlider->deactivate();
+		m_LineAngleSlider->deactivate();
+		m_StrokeDirectionChoice->deactivate();
+		m_EdgeAccuracySlider->activate();
 
 
 
