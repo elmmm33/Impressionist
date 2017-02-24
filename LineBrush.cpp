@@ -66,7 +66,7 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	{
 		case STROKE_SLIDER:
 		{
-			//printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
 			angle = pDoc->getLineAngle();	
 			break;
 		}
@@ -87,22 +87,18 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		}
 		case STROKE_BRUSH:
 		{
-			int x = target.x - s_Col;
-			int y = target.y - s_Row;
-			int width = pDoc->m_nWidth;
-			int height = pDoc->m_nHeight;
-			if (x <= 0 || x>width)
-			{
-				angle = 90;
-			}
-			else if (y <= 0 || y>height)
-			{
-				angle = 0;
-			}
+			printf("line Direct Pattern is %d \n", pDoc->lineDirectPattern);
+			double xDiff = target.x - (pDoc->currentPoint.x);
+			double yDiff = target.y - (pDoc->currentPoint.y);
+
+			pDoc->currentPoint = target;
+
+			if (xDiff == 0) angle = 90;
 			else
 			{
-				angle = pDoc->m_ucAngle[x + y*width];
+				angle = atan2(yDiff, xDiff) / (2 * PI) * 360;
 			}
+			break;
 		}
 		default:
 		{
